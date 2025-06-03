@@ -18,7 +18,7 @@ graph_builder = StateGraph(State)
 
 
 llm = init_chat_model(
-    "llama3.1",
+    "llama3.1:8b",
     model_provider="ollama",
 )
 
