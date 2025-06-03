@@ -18,8 +18,8 @@ graph_builder = StateGraph(State)
 
 
 llm = init_chat_model(
-    "mistral-7b-instruct-v0:2",
-    model_provider="bedrock_converse",
+    "llama3.1",
+    model_provider="ollama",
 )
 
 def chatbot(state: State):
