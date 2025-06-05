@@ -110,6 +110,6 @@ edit = Task(
     agent=editor
 )
 
-result = crew.kickoff(inputs={"topic": "Artificial Intelligence"})
+result = Crew.kickoff(self, inputs={"topic": "Artificial Intelligence"})
 
 print(result)
