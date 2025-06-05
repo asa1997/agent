@@ -111,3 +111,5 @@ edit = Task(
 )
 
 result = crew.kickoff(inputs={"topic": "Artificial Intelligence"})
+
+print(result)
