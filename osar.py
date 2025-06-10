@@ -1,14 +1,21 @@
-import os
+# import os
 # from utils import get_openai_api_key, pretty_print_result
-from utils import get_serper_api_key
+# from utils import get_serper_api_key
 from crewai import Agent, Task, Crew, LLM
 
 from crewai_tools import JSONSearchTool
 # openai_api_key = get_openai_api_key()
 # os.environ["OPENAI_MODEL_NAME"] = 'gpt-3.5-turbo'
-os.environ["SERPER_API_KEY"] = get_serper_api_key()
-
-json_tool = JSONSearchTool(json_path='/home/ubuntu/besecure-ml-assessment-datastore/models/llama3.1:8b/llm-benchmark/llama3.1:8b-autocomplete-test-detailed-report.json')
+# os.environ["SERPER_API_KEY"] = get_serper_api_key()
+local_embedder = {
+    "provider": "ollama",
+    "config": {
+        "model": "granite-embedding:278m",
+        "url": "http://localhost:11434/api/embeddings"
+    }
+}
+#https://ollama.com/library/granite-embedding:278m
+json_tool = JSONSearchTool(config={"embedder": local_embedder}, json_path='/home/ubuntu/besecure-ml-assessment-datastore/models/llama3.1:8b/llm-benchmark/llama3.1:8b-autocomplete-test-detailed-report.json')
 
 llm = LLM(
     model="ollama/llama3.1:8b",
@@ -67,3 +74,5 @@ inputs = {
     "version": "8b"
 }
 result = crew.kickoff(inputs=inputs)
+
+print(result)
