@@ -10,7 +10,7 @@ from crewai_tools import JSONSearchTool
 local_embedder = {
     "provider": "ollama",
     "config": {
-        "model": "granite-embedding:278m",
+        "model": "mxbai-embed-large",
         "url": "http://localhost:11434/api/embeddings"
     }
 }
