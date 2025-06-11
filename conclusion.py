@@ -96,8 +96,10 @@ def main():
     max_chars = 8000
     if len(json_string) > max_chars:
         print(f"⚠️ Truncating JSON input from {len(json_string)} to {max_chars} chars.")
-    json_data_truncated = json_string[:max_chars]
-    
+    json_cleaned = json_string.replace("```", "")  # Remove markdown code blocks
+    json_cleaned = json_cleaned.replace("\\n", "\n")  # Decode escaped newlines
+    json_data_truncated = json_cleaned[:max_chars]
+
     print(f"✅ JSON string truncated {json_data_truncated}.")
     # Create and run crew
     crew = build_crew(json_data_truncated, args.format)
