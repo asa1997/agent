@@ -28,7 +28,7 @@ def load_json_source(source: str) -> str:
 # Agent & Task Setup
 # ====================
 def build_crew(json_string: str, report_format: str):
-    llm = Ollama(model="deepseek-r1:7b", temperature=0.2)
+    llm = Ollama(model="llama3", temperature=0.2)
 
     analyst = Agent(
         role='Security Analyst',
