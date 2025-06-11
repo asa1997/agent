@@ -90,9 +90,16 @@ def main():
 
     # Load JSON manually
     json_string = load_json_source(args.source)
+    # print(json_string)
+    print(f"✅ JSON string loaded. Length: {len(json_string)} characters.")
+    max_chars = 8000
+    if len(json_string) > max_chars:
+        print(f"⚠️ Truncating JSON input from {len(json_string)} to {max_chars} chars.")
+    json_data_truncated = json_string[:max_chars]
+    
 
     # Create and run crew
-    crew = build_crew(json_string, args.format)
+    crew = build_crew(json_data_truncated, args.format)
     result = crew.kickoff()
 
     # Write output
