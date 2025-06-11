@@ -20,25 +20,18 @@ from crewai_tools import JSONSearchTool
 from embedchain import App
 from embedchain.config import AppConfig
 from embedchain.config.embedder.ollama import OllamaEmbedderConfig
+from embedchain.embedder.ollama import OllamaEmbedder
 
-# Correct embedder config for Ollama
+# Create the embedder instance first
 embedder_config = OllamaEmbedderConfig(
     model="granite-embedding:278m"
 )
 
-# app_config = AppConfig(embedder=embedder_config)
+# Create the embedder instance
+embedder = OllamaEmbedder(config=embedder_config)
 
-# Create the App instance
-app = App()
-
-# Configure the embedder after creating the app
-embedder_config = OllamaEmbedderConfig(
-    model="granite-embedding:278m"
-)
-
-# Set the embedder configuration
-app.embedder = embedder_config
-
+# Create the App instance with the embedder
+app = App(embedding_model=embedder)
 
 #https://ollama.com/library/granite-embedding:278m
 json_tool = JSONSearchTool(config={"embedder": app.embedder}, json_path='/home/ubuntu/besecure-ml-assessment-datastore/models/llama3.1:8b/llm-benchmark/llama3.1:8b-autocomplete-test-detailed-report.json')
