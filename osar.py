@@ -26,10 +26,18 @@ embedder_config = OllamaEmbedderConfig(
     model="granite-embedding:278m"
 )
 
-app_config = AppConfig(embedder=embedder_config)
+# app_config = AppConfig(embedder=embedder_config)
 
 # Create the App instance
-app = App(config=app_config)
+app = App()
+
+# Configure the embedder after creating the app
+embedder_config = OllamaEmbedderConfig(
+    model="granite-embedding:278m"
+)
+
+# Set the embedder configuration
+app.embedder = embedder_config
 
 
 #https://ollama.com/library/granite-embedding:278m
