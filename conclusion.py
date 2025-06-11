@@ -51,6 +51,8 @@ def build_crew(json_string: str, report_format: str):
     task1 = Task(
         description=(
             "You are given a raw JSON report from a machine learning security assessment. "
+            "Below is the JSON content:\n\n"
+            f"{json_string}\n\n"
             "Analyze it for security vulnerabilities, risks, and inconsistencies. "
             "Your output should be a bullet-point list of findings including severity and impact."
         ),
@@ -97,7 +99,7 @@ def main():
         print(f"⚠️ Truncating JSON input from {len(json_string)} to {max_chars} chars.")
     json_data_truncated = json_string[:max_chars]
     
-
+    print(f"✅ JSON string truncated {json_data_truncated}.")
     # Create and run crew
     crew = build_crew(json_data_truncated, args.format)
     result = crew.kickoff()
