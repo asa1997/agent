@@ -105,9 +105,14 @@ def main():
     print(f"✅ JSON string truncated {json_data_truncated}.")
     # Create and run crew
     crew = build_crew(json_data_truncated, args.format)
-    result = crew.kickoff()
-
-    # Write output
+    try:
+        result = crew.kickoff()
+        print(result)
+    except Exception as e:
+        import traceback
+        print("\n❌ Exception during Crew execution:")
+        traceback.print_exc()
+        # Write output
     with open(output_file, "w") as f:
         f.write(result)
 
