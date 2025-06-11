@@ -74,7 +74,9 @@ def build_crew(source: str, report_format: str):
     task1 = Task(
         description=f"Fetch the JSON reports from '{source}' and return them as strings.",
         expected_output="A list of raw JSON strings representing security assessment data.",
-        agent=fetcher
+        agent=fetcher,
+        tools=[loader_tool],
+        inputs={"input": source}
     )
 
     task2 = Task(
