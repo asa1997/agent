@@ -34,7 +34,8 @@ embedder = OllamaEmbedder(config=embedder_config)
 app = App(embedding_model=embedder)
 
 #https://ollama.com/library/granite-embedding:278m
-json_tool = JSONSearchTool(config={"embedder": app.embedder}, json_path='/home/ubuntu/besecure-ml-assessment-datastore/models/llama3.1:8b/llm-benchmark/llama3.1:8b-autocomplete-test-detailed-report.json')
+# Use the embedder instance directly instead of app.embedder
+json_tool = JSONSearchTool(config={"embedder": embedder}, json_path='/home/ubuntu/besecure-ml-assessment-datastore/models/llama3.1:8b/llm-benchmark/llama3.1:8b-autocomplete-test-detailed-report.json')
 
 llm = LLM(
     model="ollama/llama3.1:8b",
