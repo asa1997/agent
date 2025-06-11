@@ -10,8 +10,8 @@ from langchain_community.llms import Ollama
 # Custom Tool Definition
 # =======================
 class JSONLoaderTool(BaseTool):
-    name = "JSONLoaderTool"
-    description = "Loads JSON content from a local path or a GitHub URL"
+    name: str = "JSONLoaderTool"
+    description: str = "Loads JSON content from a local path or a GitHub URL"
 
     def run(self, input: str) -> str:
         if input.startswith("http"):
