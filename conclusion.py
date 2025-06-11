@@ -16,6 +16,7 @@ class JSONLoaderTool(BaseTool):
     description: str = "Loads JSON content from a local path or a GitHub URL"
 
     def _run(self, input: str) -> str:
+        print(f"Loading JSON from: {input}")
         if input.startswith("http"):
             return self._load_from_github(input)
         else:
