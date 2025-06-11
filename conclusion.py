@@ -58,7 +58,6 @@ def build_crew(json_string: str, report_format: str):
         ),
         expected_output="A detailed list of findings extracted from the assessment JSON.",
         agent=analyst,
-        inputs={"json_data": json_string}
     )
 
     task2 = Task(
