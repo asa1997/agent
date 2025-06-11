@@ -3,12 +3,13 @@ import json
 import argparse
 import requests
 from crewai import Agent, Task, Crew, Process
+from crewai_tools import BaseTool
 from langchain_community.llms import Ollama
 
 # =======================
 # Custom Tool Definition
 # =======================
-class JSONLoaderTool:
+class JSONLoaderTool(BaseTool):
     name = "JSONLoaderTool"
     description = "Loads JSON content from a local path or a GitHub URL"
 
