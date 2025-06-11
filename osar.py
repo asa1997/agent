@@ -7,15 +7,31 @@ from crewai_tools import JSONSearchTool
 # openai_api_key = get_openai_api_key()
 # os.environ["OPENAI_MODEL_NAME"] = 'gpt-3.5-turbo'
 # os.environ["SERPER_API_KEY"] = get_serper_api_key()
-local_embedder = {
-    "provider": "ollama",
-    "config": {
-        "model": "mxbai-embed-large",
-        "url": "http://localhost:11434/api/embeddings"
-    }
-}
+# local_embedder = {
+#     "provider": "ollama",
+#     "config": {
+#         "model": "mxbai-embed-large",
+#         "url": "http://localhost:11434/api/embeddings"
+#     }
+# }
+
+
+from embedchain import App
+from embedchain.config import AppConfig, BaseEmbedderConfig
+
+# Configure the embedder to use the correct Ollama embedding model
+embedder_config = BaseEmbedderConfig(
+    provider="ollama",
+    model="granite-embedding:278m"
+)
+
+app_config = AppConfig(embedder=embedder_config)
+
+# Create the App instance with the embedding config
+app = App(config=app_config)
+
 #https://ollama.com/library/granite-embedding:278m
-json_tool = JSONSearchTool(config={"embedder": local_embedder}, json_path='/home/ubuntu/besecure-ml-assessment-datastore/models/llama3.1:8b/llm-benchmark/llama3.1:8b-autocomplete-test-detailed-report.json')
+json_tool = JSONSearchTool(config={"embedder": app.embedder}, json_path='/home/ubuntu/besecure-ml-assessment-datastore/models/llama3.1:8b/llm-benchmark/llama3.1:8b-autocomplete-test-detailed-report.json')
 
 llm = LLM(
     model="ollama/llama3.1:8b",
