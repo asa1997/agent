@@ -3,7 +3,7 @@ import json
 import argparse
 import requests
 from crewai import Agent, Task, Crew, Process
-from crewai_tools import BaseTool
+from crewai.tools import BaseTool
 from langchain_community.llms import Ollama
 
 # =======================
