@@ -3,7 +3,9 @@ import json
 import argparse
 import requests
 from crewai import Agent, Task, Crew, Process
-from langchain_community.llms.ollama import Ollama
+# from langchain_community.llms.ollama import Ollama
+from langchain_ollama import OllamaLLM
+
 
 # =======================
 # Manual JSON Loader
@@ -28,13 +30,13 @@ def load_json_source(source: str) -> str:
 # Agent & Task Setup
 # ====================
 def build_crew(json_string: str, report_format: str):
-    llm = Ollama(model="llama3", temperature=0.2)
+    llm = OllamaLLM(model="llama3", temperature=0.2)
 
     analyst = Agent(
         role='Security Analyst',
         goal='Identify vulnerabilities and risks in the report',
         backstory='A seasoned security professional experienced in analyzing JSON-based assessments.',
-        allow_delegation=False,
+        allow_delegation=True,
         verbose=True,
         llm=llm
     )
