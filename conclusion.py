@@ -118,6 +118,7 @@ def main():
         import traceback
         print("\n❌ Exception during Crew execution:")
         traceback.print_exc()
+        result = "Crew execution failed. See error log above."
         # Write output
     with open(output_file, "w") as f:
         f.write(result)
