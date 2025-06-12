@@ -22,7 +22,7 @@ from langchain.chat_models import init_chat_model
 
 llm = init_chat_model(
     "anthropic.claude-3-sonnet-20240229-v1:0",
-    model_provider="bedrock_converse",
+    model_provider="bedrock",
     region="ap-south-1"
 )
 
