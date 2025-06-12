@@ -9,6 +9,17 @@ from langchain_community.llms import HuggingFaceHub
 from langchain_community.llms.bedrock import Bedrock
 from langchain_core.language_models import BaseLanguageModel
 
+class CrewCompatibleBedrockLLM(Bedrock):
+    def call(self, prompt: str, **kwargs) -> str:
+        # Wrap the prompt in Meta-Llama-3 required format
+        wrapped = (
+            "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n"
+            "You are a cybersecurity analyst. Answer only about the report below.\n"
+            "<|start_header_id|>user<|end_header_id|>\n"
+            f"{prompt}\n"
+            "<|start_header_id|>assistant<|end_header_id|>"
+        )
+        return self.invoke(wrapped)
 
 def load_json_source(source: str) -> str:
     print(f"🔍 Loading JSON from: {source}")
@@ -33,7 +44,7 @@ def get_llm(provider: str, model: str) -> BaseLanguageModel:
     elif provider == "bedrock":
         import boto3
         bedrock_client = boto3.client("bedrock-runtime", region_name=os.getenv("AWS_REGION", "ap-south-1"))
-        return Bedrock(
+        return CrewCompatibleBedrockLLM(
             client=bedrock_client,
             model_id=model,
             model_kwargs={"temperature": 0.2}
