@@ -116,8 +116,8 @@ graph_builder.add_conditional_edges(
     {"tools": "tools", END: END},
 )
 # Any time a tool is called, we return to the chatbot to decide the next step
-graph_builder.add_edge("tools", "chatbot")
 graph_builder.add_edge(START, "chatbot")
+graph_builder.add_edge("chatbot", "tools")
 graph = graph_builder.compile()
 
 def stream_graph_updates(user_input: str):
