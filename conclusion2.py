@@ -10,16 +10,31 @@ from langchain_community.llms.bedrock import Bedrock
 from langchain_core.language_models import BaseLanguageModel
 
 class CrewCompatibleBedrockLLM(Bedrock):
-    def call(self, prompt: str, **kwargs) -> str:
-        # Wrap the prompt in Meta-Llama-3 required format
-        wrapped = (
+    def invoke(self, input: str, **kwargs) -> str:
+        # Format for Meta-Llama3
+        prompt = (
             "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n"
             "You are a cybersecurity analyst. Answer only about the report below.\n"
             "<|start_header_id|>user<|end_header_id|>\n"
-            f"{prompt}\n"
+            f"{input}\n"
             "<|start_header_id|>assistant<|end_header_id|>"
         )
-        return self.invoke(wrapped)
+
+        # Use Bedrock's actual .invoke()
+        raw_response = super().invoke(prompt)
+
+        # Bedrock (LangChain) might return dict or object
+        if isinstance(raw_response, dict):
+            return raw_response.get("generation", {}).get("text", "")
+        elif hasattr(raw_response, "text"):
+            return raw_response.text
+        elif isinstance(raw_response, str):
+            return raw_response
+        else:
+            return str(raw_response)
+
+    def call(self, prompt: str, **kwargs) -> str:
+        return self.invoke(prompt)
 
 def load_json_source(source: str) -> str:
     print(f"🔍 Loading JSON from: {source}")
