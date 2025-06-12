@@ -109,6 +109,8 @@ def stream_graph_updates(user_input: str):
 
 
 # Any time a tool is called, we return to the chatbot to decide the next step
+graph_builder.add_node("chatbot", chatbot)
+
 graph_builder.add_edge(START, "chatbot")
 graph_builder.add_edge("chatbot", "tools")
 
