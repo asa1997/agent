@@ -102,6 +102,15 @@ def route_tools(
         return "tools"
     return END
 
+def stream_graph_updates(user_input: str):
+    for event in graph.stream({"messages": [{"role": "user", "content": user_input}]}):
+        for value in event.values():
+            print("Assistant:", value["messages"][-1].content)
+
+
+# Any time a tool is called, we return to the chatbot to decide the next step
+graph_builder.add_edge(START, "chatbot")
+graph_builder.add_edge("chatbot", "tools")
 
 # The `tools_condition` function returns "tools" if the chatbot asks to use a tool, and "END" if
 # it is fine directly responding. This conditional routing defines the main agent loop.
@@ -115,15 +124,9 @@ graph_builder.add_conditional_edges(
     # e.g., "tools": "my_tools"
     {"tools": "tools", END: END},
 )
-# Any time a tool is called, we return to the chatbot to decide the next step
-graph_builder.add_edge(START, "chatbot")
-graph_builder.add_edge("chatbot", "tools")
 graph = graph_builder.compile()
 
-def stream_graph_updates(user_input: str):
-    for event in graph.stream({"messages": [{"role": "user", "content": user_input}]}):
-        for value in event.values():
-            print("Assistant:", value["messages"][-1].content)
+
 
 while True:
     try:
