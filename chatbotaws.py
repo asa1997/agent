@@ -21,7 +21,8 @@ from langchain.chat_models import init_chat_model
 # https://docs.aws.amazon.com/bedrock/latest/userguide/getting-started.html
 
 llm = init_chat_model(
-    "anthropic.claude-3-sonnet-20240229-v1:0",
+    # "anthropic.claude-3-sonnet-20240229-v1:0",
+    "meta.llama3-8b-instruct-v1:0",
     model_provider="bedrock",
     region="ap-south-1"
 )
