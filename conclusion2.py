@@ -32,7 +32,7 @@ def get_llm(provider: str, model: str) -> BaseLanguageModel:
 
     elif provider == "bedrock":
         import boto3
-        bedrock_client = boto3.client("bedrock-runtime", region_name=os.getenv("AWS_REGION", "us-east-1"))
+        bedrock_client = boto3.client("bedrock-runtime", region_name=os.getenv("AWS_REGION", "ap-south-1"))
         return Bedrock(
             client=bedrock_client,
             model_id=model,
@@ -95,8 +95,8 @@ def main():
     parser = argparse.ArgumentParser(description="Run security assessment crew")
     parser.add_argument('--source', required=True, help="Path or URL to the JSON report")
     parser.add_argument('--format', choices=['txt', 'md', 'pdf'], default='md')
-    parser.add_argument('--provider', choices=['huggingface', 'bedrock'], required=True)
-    parser.add_argument('--model', required=True, help="LLM model ID (e.g. 'meta-llama/Meta-Llama-3-8B' or 'anthropic.claude-3-sonnet-20240229-v1:0')")
+    parser.add_argument('--provider', choices=['huggingface', 'bedrock'], default='bedrock')
+    parser.add_argument('--model', help="LLM model ID (e.g. 'meta-llama/Meta-Llama-3-8B' or 'anthropic.claude-3-sonnet-20240229-v1:0')",default='meta.llama3-8b-instruct-v1:0')
     args = parser.parse_args()
 
     os.makedirs("output", exist_ok=True)
