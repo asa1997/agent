@@ -111,7 +111,13 @@ def main():
             "report_format": args.format,
             "messages": []
         })
-        report = result.get("report_output", "")
+        report_msg = result["report_output"]
+        if hasattr(report_msg, "content"):
+            report = report_msg.content
+        elif hasattr(report_msg, "text"):
+            report = report_msg.text()
+        else:
+            report = str(report_msg)
         print(report)
     except Exception as e:
         import traceback
