@@ -2,7 +2,7 @@ import os
 import argparse
 import requests
 
-from langgraph.graph import Graph
+from langgraph.graph import Graph, START, END
 from langchain.chat_models import init_chat_model
 from langchain.prompts import PromptTemplate
 
@@ -94,6 +94,8 @@ def build_langgraph() -> Graph:
     # Now add the edge from analysis → report. Try positional key signature.
     try:
         # common signature: add_edge(src_name, dest_name, src_key, dest_key)
+        graph.add_edge(START, "analysis")
+        
         graph.add_edge("analysis", "report", "analysis_output", "analysis_output")
     except TypeError:
         # If that fails, inspect signature or try alternative forms:
