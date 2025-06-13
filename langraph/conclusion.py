@@ -97,11 +97,14 @@ def build_langgraph() -> Graph:
         graph.add_edge(START, "analysis")
         
         graph.add_edge("analysis", "report", "analysis_output", "analysis_output")
+        graph.add_edge("report", END)
     except TypeError:
         # If that fails, inspect signature or try alternative forms:
         # For some versions: add_edge(src, dest)
         try:
+            graph.add_edge(START, "analysis")
             graph.add_edge("analysis", "report")
+            graph.add_edge("report", END)
             # In this case LangGraph may auto-wire matching keys by name.
         except Exception as e:
             print("⚠️ Warning: could not add explicit edge mapping:", e)
@@ -130,14 +133,18 @@ def main():
     json_data_truncated = json_cleaned[:max_chars]
 
     graph = build_langgraph()
+    compiled = graph.compile()
+        
     try:
-        compiled = graph.compile()
         result = compiled.invoke({
             "json_input": json_data_truncated,
             "report_format": args.format
         })
-        # report = result.get("report_output", "")
+        if result is None:
+            raise RuntimeError("Graph run returned no output — check wiring.")
+        report = result["report_output"]
         print(report)
+
     except Exception as e:
         import traceback
         print("\n❌ Exception during LangGraph execution:")
