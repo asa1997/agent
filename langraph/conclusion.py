@@ -58,7 +58,6 @@ def analysis_node(state: State) -> dict:
         f"{state['json_input']}\n\n"
         "Analyze from a security standpoint and draw a conclusion regarding the safety of using this LLM."
         "Your findings should be useful for both organizations and individuals who are considering using this LLM."
-        "Produce a bullet‑point list of findings, each with severity and impact."
     )
     out = llm.invoke(prompt)
     return {"analysis_output": out}
