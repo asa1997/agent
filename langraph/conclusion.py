@@ -136,7 +136,7 @@ def main():
             "json_input": json_data_truncated,
             "report_format": args.format
         })
-        report = result.get("report_output", "")
+        # report = result.get("report_output", "")
         print(report)
     except Exception as e:
         import traceback
