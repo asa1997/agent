@@ -4,7 +4,7 @@ import argparse
 import requests
 
 # LangGraph and LangChain imports
-from langgraph.graph import StateGraph, START
+from langgraph.graph import Graph, START
 from langgraph.nodes import LLMNode
 # from langchain.chat_models import Ollama
 from langchain.chat_models import init_chat_model
@@ -29,6 +29,24 @@ def load_json_source(source: str) -> str:
         with open(source, 'r') as f:
             return f.read()
 
+llm = init_chat_model(
+        # "anthropic.claude-3-sonnet-20240229-v1:0",
+        "meta.llama3-8b-instruct-v1:0",
+        model_provider="bedrock",
+        region="ap-south-1"
+    )
+
+def analysis_node(inputs):
+    json_input = inputs["json_input"]
+    prompt = (
+        "You are a seasoned security analyst. "
+        "Given the following JSON-based machine learning security assessment:\n\n"
+        f"{json_input}\n\n"
+        "Analyze it for security vulnerabilities, risks, and inconsistencies. "
+        "Produce a bullet-point list of findings, each with severity and impact."
+    )
+    result = llm.invoke(prompt)
+    return {"analysis_output": result}
 # ====================
 # Build LangGraph Workflow
 # ====================
@@ -42,28 +60,23 @@ def build_langgraph(json_string: str, report_format: str):
     # Instantiate the LLM client (using OllamaLLM via LangChain)
     # llm = Ollama(model="llama3", temperature=0.2)
     
-    llm = init_chat_model(
-        # "anthropic.claude-3-sonnet-20240229-v1:0",
-        "meta.llama3-8b-instruct-v1:0",
-        model_provider="bedrock",
-        region="ap-south-1"
-    )
 
 
-    # Prompt for analysis step
-    analysis_template = PromptTemplate.from_template(
-        "You are a seasoned security analyst. "
-        "Given the following JSON-based machine learning security assessment:\n\n"
-        "{json_input}\n\n"
-        "Analyze it for security vulnerabilities, risks, and inconsistencies. "
-        "Produce a bullet-point list of findings, each with severity and impact."
-    )
-    analysis_node = LLMNode(
-        llm=llm,
-        prompt=analysis_template,
-        input_keys=["json_input"],
-        output_key="analysis_output"
-    )
+
+    # # Prompt for analysis step
+    # analysis_template = PromptTemplate.from_template(
+    #     "You are a seasoned security analyst. "
+    #     "Given the following JSON-based machine learning security assessment:\n\n"
+    #     "{json_input}\n\n"
+    #     "Analyze it for security vulnerabilities, risks, and inconsistencies. "
+    #     "Produce a bullet-point list of findings, each with severity and impact."
+    # )
+    # analysis_node = LLMNode(
+    #     llm=llm,
+    #     prompt=analysis_template,
+    #     input_keys=["json_input"],
+    #     output_key="analysis_output"
+    # )
 
     # Prompt for reporting step
     report_template = PromptTemplate.from_template(
