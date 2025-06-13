@@ -129,7 +129,8 @@ def main():
 
     graph = build_langgraph()
     try:
-        result = graph.run({
+        compiled = graph.compile()
+        result = compiled.invoke({
             "json_input": json_data_truncated,
             "report_format": args.format
         })
