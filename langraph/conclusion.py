@@ -3,12 +3,10 @@ import json
 import argparse
 import requests
 
-# LangGraph and LangChain imports
-from langgraph.graph import Graph, START
-# from langgraph.nodes import LLMNode
-# from langchain.chat_models import Ollama
+# LangGraph import
+from langgraph.graph import Graph
+# LangChain imports
 from langchain.chat_models import init_chat_model
-
 from langchain.prompts import PromptTemplate
 
 # =======================
@@ -29,80 +27,69 @@ def load_json_source(source: str) -> str:
         with open(source, 'r') as f:
             return f.read()
 
+# Instantiate the LLM client once (e.g., Bedrock-backed Llama3)
 llm = init_chat_model(
-        # "anthropic.claude-3-sonnet-20240229-v1:0",
-        "meta.llama3-8b-instruct-v1:0",
-        model_provider="bedrock",
-        region="ap-south-1"
-    )
+    "meta.llama3-8b-instruct-v1:0",
+    model_provider="bedrock",
+    region="ap-south-1"
+)
 
-def analysis_node(inputs):
-    json_input = inputs["json_input"]
-    prompt = (
+# ====================
+# Node functions
+# ====================
+def analysis_node(inputs: dict) -> dict:
+    """
+    Expects inputs["json_input"] → returns {"analysis_output": ...}
+    """
+    json_input = inputs.get("json_input", "")
+    prompt_text = (
         "You are a seasoned security analyst. "
         "Given the following JSON-based machine learning security assessment:\n\n"
         f"{json_input}\n\n"
         "Analyze it for security vulnerabilities, risks, and inconsistencies. "
         "Produce a bullet-point list of findings, each with severity and impact."
     )
-    result = llm.invoke(prompt)
+    # Use llm.invoke (as in your setup) to get completion
+    result = llm.invoke(prompt_text)
     return {"analysis_output": result}
-# ====================
-# Build LangGraph Workflow
-# ====================
-def build_langgraph(json_string: str, report_format: str):
+
+def report_node(inputs: dict) -> dict:
     """
-    Constructs a LangGraph Graph with two nodes:
-    - analysis_node: analyzes the JSON for security findings.
-    - report_node: summarizes the analysis into the desired format.
+    Expects inputs["analysis_output"] and inputs["report_format"] → returns {"report_output": ...}
     """
-
-    # Instantiate the LLM client (using OllamaLLM via LangChain)
-    # llm = Ollama(model="llama3", temperature=0.2)
-    
-
-
-
-    # # Prompt for analysis step
-    # analysis_template = PromptTemplate.from_template(
-    #     "You are a seasoned security analyst. "
-    #     "Given the following JSON-based machine learning security assessment:\n\n"
-    #     "{json_input}\n\n"
-    #     "Analyze it for security vulnerabilities, risks, and inconsistencies. "
-    #     "Produce a bullet-point list of findings, each with severity and impact."
-    # )
-    # analysis_node = LLMNode(
-    #     llm=llm,
-    #     prompt=analysis_template,
-    #     input_keys=["json_input"],
-    #     output_key="analysis_output"
-    # )
-
-    # Prompt for reporting step
+    analysis_output = inputs.get("analysis_output", "")
+    report_format = inputs.get("report_format", "md")
+    # Build prompt via PromptTemplate
     report_template = PromptTemplate.from_template(
         "You are a security summary writer. "
         "Based on the security analysis below, write a clear, structured conclusion report in {report_format} format. "
         "Include the most critical findings, formatted professionally."
         "\n\nSecurity Analysis:\n{analysis_output}"
     )
-    report_node = LLMNode(
-        llm=llm,
-        prompt=report_template,
-        input_keys=["analysis_output", "report_format"],
-        output_key="report_output"
+    prompt_text = report_template.format(
+        analysis_output=analysis_output,
+        report_format=report_format
     )
+    result = llm.invoke(prompt_text)
+    return {"report_output": result}
 
-    # Build graph
+# ====================
+# Build LangGraph Workflow
+# ====================
+def build_langgraph() -> Graph:
+    """
+    Constructs a LangGraph Graph with two function nodes:
+    - "analysis": calls analysis_node
+    - "report": calls report_node
+    """
     graph = Graph()
+    # Add nodes. Depending on LangGraph version, Graph.add_node may infer from signature or require specifying input/output keys.
+    # Here we assume Graph.add_node(name, func) is acceptable.
     graph.add_node("analysis", analysis_node)
     graph.add_node("report", report_node)
-
-    # Wire outputs: analysis_output feeds into report node’s input
+    # Wire the output of analysis → input of report
     graph.add_edge("analysis", "report", mapping={"analysis_output": "analysis_output"})
-    # Also wire report_format into report node from root inputs
-    # LangGraph automatically passes unchanged inputs if the node’s input_keys include them
-    # So ensure when running, we supply both json_input and report_format
-
+    # report_format and json_input are root inputs; graph.run(...) should supply both.
     return graph
 
 # ====================
@@ -127,14 +114,14 @@ def main():
     json_data_truncated = json_cleaned[:max_chars]
 
     # Build and run the graph
-    graph = build_langgraph(json_data_truncated, args.format)
+    graph = build_langgraph()
     try:
-        # graph.run takes a dict of root inputs matching input_keys used by nodes
+        # Supply root inputs matching what nodes expect:
         result = graph.run({
             "json_input": json_data_truncated,
             "report_format": args.format
         })
-        report = result["report_output"]
+        report = result.get("report_output", "")
         print(report)
     except Exception as e:
         import traceback
@@ -142,7 +129,8 @@ def main():
         traceback.print_exc()
         report = "LangGraph execution failed. See error log above."
 
-    # Write output
+    # If PDF is desired, post-process here (e.g., convert Markdown/text to PDF).
+    # For simplicity, we write raw text/markdown:
     with open(output_file, "w") as f:
         f.write(report)
     print(f"\n✅ Final report written to: {output_file}")
