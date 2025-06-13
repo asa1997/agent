@@ -52,10 +52,12 @@ llm = init_chat_model(
 # ====================
 def analysis_node(state: State) -> dict:
     prompt = (
-        "You are a seasoned security analyst. "
-        "Given the following JSON-based machine learning security assessment:\n\n"
+        "You are a seasoned Cybersecurity Analyst with years of experience in the industry. "
+        "Your task is to analyze a raw JSON report from a security assessment done on an LLM. "
+        "Given is the raw JSON report of the security assessment on the LLM :\n\n"
         f"{state['json_input']}\n\n"
-        "Analyze it for security vulnerabilities, risks, and inconsistencies. "
+        "Analyze from a security standpoint and draw a conclusion regarding the safety of using this LLM."
+        "Your findings should be useful for both organizations and individuals who are considering using this LLM."
         "Produce a bullet‑point list of findings, each with severity and impact."
     )
     out = llm.invoke(prompt)
@@ -66,6 +68,9 @@ def report_node(state: State) -> dict:
         "You are a security summary writer. "
         "Based on this analysis:\n\n{analysis_output}\n\n"
         "Write a clear, structured conclusion report in {report_format} format."
+        "The report should be concise, actionable, and suitable for all kinds of audience."
+        "Ensure it includes all critical findings and recommendations."
+        
     )
     prompt = template.format(
         analysis_output=state["analysis_output"],
