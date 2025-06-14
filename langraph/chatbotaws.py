@@ -70,11 +70,16 @@ compiled = graph.compile()
 
 # 🎤 Interactive loop
 def stream_graph_updates(user_input: str):
-    for event in compiled.stream({"messages": [{"role": "user", "content": user_input}],}):
-        msgs = event["messages"]
-        if msgs:
-            assistant_msg = msgs[-1]
-            print("Assistant:", assistant_msg.content)
+    # Use stream_mode="values" to emit full state
+    for event in compiled.stream(
+        {"messages": [{"role": "user", "content": user_input}]},
+        stream_mode="values"
+    ):
+        # Each event is a dict with state keys
+        if "messages" in event and event["messages"]:
+            last_msg = event["messages"][-1]
+            print("Assistant:", last_msg.content)
+
 
 if __name__ == "__main__":
     while True:
