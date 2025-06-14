@@ -14,7 +14,7 @@ from langchain_core.messages import ToolMessage
 
 tool = TavilySearch(max_results=2)
 tools = [tool]
-tool.invoke("What's a 'node' in LangGraph?")
+# tool.invoke("What's a 'node' in LangGraph?")
 
 class State(TypedDict):
     # Messages have the type "list". The `add_messages` function
