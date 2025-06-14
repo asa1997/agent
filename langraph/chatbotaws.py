@@ -107,8 +107,8 @@ def stream_graph_updates(user_input: str):
         for value in event.values():
             if value.get("messages") and len(value["messages"]) > 0:
                 print("Assistant:", value["messages"][-1].content)
-            else:
-                print("Assistant: No response generated.")
+            # else:
+            #     print("Assistant: No response generated.")
 
 
 # Any time a tool is called, we return to the chatbot to decide the next step
