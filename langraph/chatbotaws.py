@@ -1,151 +1,84 @@
 from typing import Annotated
-
 from typing_extensions import TypedDict
 
+from langchain.chat_models import init_chat_model
+from langchain_tavily import TavilySearch
+from langchain_core.messages import ToolMessage, AIMessage
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
-from langchain.chat_models import init_chat_model
-
-from langchain_tavily import TavilySearch
-
 import json
 
-from langchain_core.messages import ToolMessage
-
+# 🚀 Tools setup
 tool = TavilySearch(max_results=2)
 tools = [tool]
-# tool.invoke("What's a 'node' in LangGraph?")
 
+# 📦 Graph State
 class State(TypedDict):
-    # Messages have the type "list". The `add_messages` function
-    # in the annotation defines how this state key should be updated
-    # (in this case, it appends messages to the list, rather than overwriting them)
     messages: Annotated[list, add_messages]
 
-
-graph_builder = StateGraph(State)
-
+# ⛓️ Build Tool Executor Node
 class BasicToolNode:
-    """A node that runs the tools requested in the last AIMessage."""
+    def __init__(self, tools: list):
+        self.tools = {t.name: t for t in tools}
 
-    def __init__(self, tools: list) -> None:
-        self.tools_by_name = {tool.name: tool for tool in tools}
-
-    def __call__(self, inputs: dict):
-        if messages := inputs.get("messages", []):
-            message = messages[-1]
-        else:
-            raise ValueError("No message found in input")
+    def __call__(self, state: State) -> dict:
+        last: AIMessage = state["messages"][-1]
+        if not getattr(last, "tool_calls", []):
+            print("🧭 No tool_call found; skipping tool node.")
+            return {"messages": []}
         outputs = []
-        for tool_call in message.tool_calls:
-            print("calling tool")
-            print(f"\n[DEBUG] 🔍 TOOL CALLED: {tool_call['name']}")
-            print(f"[DEBUG] 🔍 ARGS: {tool_call['args']}")
-            tool_result = self.tools_by_name[tool_call["name"]].invoke(
-                tool_call["args"]
-            )
-            outputs.append(
-                ToolMessage(
-                    content=json.dumps(tool_result),
-                    name=tool_call["name"],
-                    tool_call_id=tool_call["id"],
-                )
-            )
+        for call in last.tool_calls:
+            print(f"🧩 Executing tool: {call['name']} with args {call['args']}")
+            res = self.tools[call["name"]].invoke(call["args"])
+            outputs.append(ToolMessage(content=json.dumps(res), name=call["name"], tool_call_id=call["id"]))
         return {"messages": outputs}
 
+tool_node = BasicToolNode(tools)
 
-tool_node = BasicToolNode(tools=[tool])
-graph_builder.add_node("tools", tool_node)
-
-
-# Follow the steps here to configure your credentials:
-# https://docs.aws.amazon.com/bedrock/latest/userguide/getting-started.html
-
+# 💬 LLM & bound tools
 llm = init_chat_model(
-    # "anthropic.claude-3-sonnet-20240229-v1:0",
     "meta.llama3-8b-instruct-v1:0",
     model_provider="bedrock",
     region="ap-south-1"
 )
-
-
 llm_with_tools = llm.bind_tools(tools)
 
-def chatbot(state: State):
-    return {"messages": [llm_with_tools.invoke(state["messages"])]}
-
-# The first argument is the unique node name
-# The second argument is the function or object that will be called whenever
-# the node is used.
-# graph_builder.add_node("chatbot", chatbot)
-
-# graph_builder.add_edge(START, "chatbot")
-
-# graph = graph_builder.compile()
-
-
-
-
-
-
-def route_tools(
-    state: State,
-):
-    """
-    Use in the conditional_edge to route to the ToolNode if the last message
-    has tool calls. Otherwise, route to the end.
-    """
-    if isinstance(state, list):
-        ai_message = state[-1]
-    elif messages := state.get("messages", []):
-        ai_message = messages[-1]
+def chatbot(state: State) -> dict:
+    msgs = state["messages"]
+    response: AIMessage = llm_with_tools.invoke(msgs)
+    if getattr(response, "tool_calls", None):
+        print("🤖 Model issued tool_calls:", response.tool_calls)
     else:
-        raise ValueError(f"No messages found in input state to tool_edge: {state}")
-    if hasattr(ai_message, "tool_calls") and len(ai_message.tool_calls) > 0:
+        print("🤖 Model responded with no tool_calls.")
+    return {"messages": [response]}
+
+# 🧠 Routing logic
+def route_tools(state: State):
+    last = state["messages"][-1]
+    if getattr(last, "tool_calls", None):
         return "tools"
     return END
 
+# 🔁 Build and compile the graph
+graph = StateGraph(State)
+graph.add_node("chatbot", chatbot)
+graph.add_node("tools", tool_node)
+graph.add_edge(START, "chatbot")
+graph.add_conditional_edges("chatbot", route_tools, {"tools": "tools", END: END})
+graph.add_edge("tools", "chatbot")
+compiled = graph.compile()
+
+# 🎤 Interactive loop
 def stream_graph_updates(user_input: str):
-    for event in graph.stream({"messages": [{"role": "user", "content": user_input}]}):
-        for value in event.values():
-            if value.get("messages") and len(value["messages"]) > 0:
-                print("Assistant:", value["messages"][-1].content)
-            # else:
-            #     print("Assistant: No response generated.")
+    for event in compiled.stream({"messages": [{"role": "user", "content": user_input}],}):
+        msgs = event["messages"]
+        if msgs:
+            assistant_msg = msgs[-1]
+            print("Assistant:", assistant_msg.content)
 
-
-# Any time a tool is called, we return to the chatbot to decide the next step
-graph_builder.add_node("chatbot", chatbot)
-
-graph_builder.add_edge(START, "chatbot")
-graph_builder.add_edge("chatbot", "tools")
-
-# The `tools_condition` function returns "tools" if the chatbot asks to use a tool, and "END" if
-# it is fine directly responding. This conditional routing defines the main agent loop.
-graph_builder.add_conditional_edges(
-    "chatbot",
-    route_tools,
-    # The following dictionary lets you tell the graph to interpret the condition's outputs as a specific node
-    # It defaults to the identity function, but if you
-    # want to use a node named something else apart from "tools",
-    # You can update the value of the dictionary to something else
-    # e.g., "tools": "my_tools"
-    {"tools": "tools", END: END},
-)
-graph = graph_builder.compile()
-
-
-
-while True:
-    try:
-        user_input = input("User: ")
-        if user_input.lower() in ["quit", "exit", "q"]:
-            print("Goodbye!")
+if __name__ == "__main__":
+    while True:
+        ui = input("User: ")
+        if ui.lower() in ("quit", "exit"):
             break
-        stream_graph_updates(user_input)
-    except:
-        # fallback if input() is not available
-        user_input = "What do you know about LangGraph?"
-        print("User: " + user_input)
-        stream_graph_updates(user_input)
-        break
+        stream_graph_updates(ui)
