@@ -39,6 +39,8 @@ class BasicToolNode:
         outputs = []
         for tool_call in message.tool_calls:
             print("calling tool")
+            print(f"\n[DEBUG] 🔍 TOOL CALLED: {tool_call['name']}")
+            print(f"[DEBUG] 🔍 ARGS: {tool_call['args']}")
             tool_result = self.tools_by_name[tool_call["name"]].invoke(
                 tool_call["args"]
             )
