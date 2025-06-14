@@ -105,7 +105,10 @@ def route_tools(
 def stream_graph_updates(user_input: str):
     for event in graph.stream({"messages": [{"role": "user", "content": user_input}]}):
         for value in event.values():
-            print("Assistant:", value["messages"][-1].content)
+            if value.get("messages") and len(value["messages"]) > 0:
+                print("Assistant:", value["messages"][-1].content)
+            else:
+                print("Assistant: No response generated.")
 
 
 # Any time a tool is called, we return to the chatbot to decide the next step
