@@ -36,10 +36,14 @@ class BasicToolNode:
 tool_node = BasicToolNode(tools)
 
 # 💬 LLM & bound tools
+# llm = init_chat_model(
+#     "meta.llama3-8b-instruct-v1:0",
+#     model_provider="bedrock",
+#     region="ap-south-1"
+# )
 llm = init_chat_model(
-    "meta.llama3-8b-instruct-v1:0",
-    model_provider="bedrock",
-    region="ap-south-1"
+    "llama3.2:latest",
+    model_provider="ollama",
 )
 llm_with_tools = llm.bind_tools(tools)
 
