@@ -11,12 +11,16 @@ from langgraph.prebuilt import ToolNode, tools_condition
 # Follow the steps here to configure your credentials:
 # https://docs.aws.amazon.com/bedrock/latest/userguide/getting-started.html
 
-llm = init_chat_model(
-    "meta.llama3-8b-instruct-v1:0",
-    model_provider="bedrock",
-    region="ap-south-1"
-)
+# llm = init_chat_model(
+#     "meta.llama3-8b-instruct-v1:0",
+#     model_provider="bedrock",
+#     region="ap-south-1"
+# )
 
+llm = init_chat_model(
+    "deepseek-r1:7b",
+    model_provider="ollama",
+)
 
 class State(TypedDict):
     messages: Annotated[list, add_messages]
