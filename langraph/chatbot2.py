@@ -50,9 +50,11 @@ graph_builder.add_edge("tools", "chatbot")
 graph_builder.add_edge(START, "chatbot")
 memory = MemorySaver()
 graph = graph_builder.compile(checkpointer=memory)
-
+config = {"configurable": {"thread_id": "1"}}
 def stream_graph_updates(user_input: str):
-    for event in graph.stream({"messages": [{"role": "user", "content": user_input}]}):
+    for event in graph.stream({"messages": [{"role": "user", "content": user_input}]},
+        config,
+        stream_mode="values",):
         for value in event.values():
             print("Assistant:", value["messages"][-1].content)
 
