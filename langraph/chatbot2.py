@@ -52,11 +52,18 @@ memory = MemorySaver()
 graph = graph_builder.compile(checkpointer=memory)
 config = {"configurable": {"thread_id": "1"}}
 def stream_graph_updates(user_input: str):
-    for event in graph.stream({"messages": [{"role": "user", "content": user_input}]},
-        config,
-        stream_mode="values",):
-        for value in event.values():
-            print("Assistant:", value["messages"][-1].content)
+    # for event in graph.stream({"messages": [{"role": "user", "content": user_input}]},
+    #     config,
+    #     stream_mode="values",):
+    #     for value in event.values():
+    #         print("Assistant:", value["messages"][-1].content)
+    events = graph.stream(
+    {"messages": [{"role": "user", "content": user_input}]},
+    config,
+    stream_mode="values",
+)
+    for event in events:
+        event["messages"][-1].pretty_print()
 
 while True:
     try:
