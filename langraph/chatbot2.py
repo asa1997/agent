@@ -18,7 +18,7 @@ from langgraph.prebuilt import ToolNode, tools_condition
 # )
 
 llm = init_chat_model(
-    "llama3.2:3b",
+    "llama3.2:latest",
     model_provider="ollama",
 )
 
