@@ -18,7 +18,7 @@ from langgraph.prebuilt import ToolNode, tools_condition
 # )
 
 llm = init_chat_model(
-    "deepseek-r1:7b",
+    "gemma3:12b",
     model_provider="ollama",
 )
 
