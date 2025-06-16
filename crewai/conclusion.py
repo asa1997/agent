@@ -45,7 +45,7 @@ def build_crew(json_string: str, report_format: str):
         role='Security Analyst',
         goal='Identify vulnerabilities and risks in the report',
         backstory='A seasoned security professional experienced in analyzing JSON-based assessments.',
-        allow_delegation=True,
+        allow_delegation=False,
         verbose=True,
         llm=llm
     )
