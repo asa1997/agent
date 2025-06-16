@@ -32,7 +32,7 @@ def load_json_source(source: str) -> str:
 
 llm = LLM(
     model="ollama/llama3.2:latest",
-    # stream=True  # Enable streaming
+    stream=False  # Enable streaming
 )
 # ====================
 # Agent & Task Setup
