@@ -36,7 +36,7 @@ def load_json_source(source: str) -> str:
 # ====================
 def build_crew(json_string: str, report_format: str):
     # llm = OllamaLLM(model="llama3", temperature=0.2)
-    llm = CrewCompatibleOllama(model="llama3", temperature=0.2)
+    llm = CrewCompatibleOllama(model="llama3.2:latest", temperature=0.2)
 
     analyst = Agent(
         role='Security Analyst',
