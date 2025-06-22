@@ -4,12 +4,23 @@ import argparse
 import requests
 from crewai import Agent, Task, Crew, Process, LLM
 from crewai_tools import FileReadTool, JSONSearchTool
+from langchain_openai import ChatOpenAI
 
 
-llm = LLM(
+os.environ.pop("OPENAI_API_KEY", None)
+os.environ["CREWAI_LLM_PROVIDER"] = "ollama"
+os.environ["OPENAI_API_KEY"] = "NA"
+
+llm = ChatOpenAI(
     model="ollama/llama3.2:latest",
-    stream=False  # Enable streaming
+    base_url="http://localhost:11434/v1",
+    temperature=0.3
 )
+
+# llm = LLM(
+#     model="ollama/llama3.2:latest",
+#     stream=False  # Enable streaming
+# )
 
 analyst = Agent(
     role='Cybersecurity Analyst L3',
