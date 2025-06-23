@@ -24,39 +24,24 @@ json_tool = JSONSearchTool(
     }
 )
 
-# Create an agent with clear tool usage instructions
+# Create an agent with Ollama LLM
 json_analyst = Agent(
     role="JSON Data Analyst",
     goal="Parse and analyze large JSON files efficiently",
-    backstory="""Expert in processing large structured data files and extracting meaningful insights from code repositories. 
-    You know how to use search tools properly by providing clear, specific search queries as strings.""",
+    backstory="Expert in processing large structured data files and extracting meaningful insights from code repositories",
     tools=[json_tool],
-    llm="ollama/llama3.1:8b",
+    llm="ollama/llama3.2:latest",  # Use Ollama model for the agent
     verbose=True
 )
 
-# Define task with explicit instructions for tool usage
+# Define tasks for parsing specific sections
 parse_task = Task(
-    description="""Parse the large JSON file containing 20k lines of code and extract key information.
-
-    Use the JSON search tool with specific search queries like:
-    - "function" to find function definitions
-    - "class" to find class definitions  
-    - "import" to find import statements
-    - "def " to find Python function definitions
-    - "async def" to find async functions
-    
-    Search systematically through different aspects of the code structure.""",
-    expected_output="""A comprehensive analysis including:
-    - Total number of functions found
-    - List of main function names
-    - Class definitions identified
-    - Import dependencies discovered
-    - Code structure insights""",
+    description="Parse the large JSON file containing 20k lines of code and extract key information about code structure, functions, classes, and dependencies. Focus on identifying patterns and architectural insights.",
+    expected_output="A structured summary of the JSON content with key findings including function count, class definitions, import dependencies, and code complexity analysis",
     agent=json_analyst
 )
-try:
 
+try:
     crew = Crew(
         agents=[json_analyst],
         tasks=[parse_task],
@@ -66,6 +51,6 @@ try:
     result = crew.kickoff()
     print("Analysis Results:", result)
 except Exception as e:
+    print("An error occurred during the analysis:", str(e))
     import traceback
-    print("❌ An error occurred while generating the report:")
     traceback.print_exc()
