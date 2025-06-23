@@ -55,12 +55,17 @@ parse_task = Task(
     - Code structure insights""",
     agent=json_analyst
 )
+try:
 
-crew = Crew(
-    agents=[json_analyst],
-    tasks=[parse_task],
-    verbose=True
-)
+    crew = Crew(
+        agents=[json_analyst],
+        tasks=[parse_task],
+        verbose=True
+    )
 
-result = crew.kickoff()
-print("Analysis Results:", result)
+    result = crew.kickoff()
+    print("Analysis Results:", result)
+except Exception as e:
+    import traceback
+    print("❌ An error occurred while generating the report:")
+    traceback.print_exc()
