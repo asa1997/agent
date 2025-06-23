@@ -24,20 +24,35 @@ json_tool = JSONSearchTool(
     }
 )
 
-# Create an agent with Ollama LLM
+# Create an agent with clear tool usage instructions
 json_analyst = Agent(
     role="JSON Data Analyst",
     goal="Parse and analyze large JSON files efficiently",
-    backstory="Expert in processing large structured data files and extracting meaningful insights from code repositories",
+    backstory="""Expert in processing large structured data files and extracting meaningful insights from code repositories. 
+    You know how to use search tools properly by providing clear, specific search queries as strings.""",
     tools=[json_tool],
-    llm="ollama/llama3.2:latest",  # Use Ollama model for the agent
+    llm="ollama/llama3.1:8b",
     verbose=True
 )
 
-# Define tasks for parsing specific sections
+# Define task with explicit instructions for tool usage
 parse_task = Task(
-    description="Parse the large JSON file containing 20k lines of code and extract key information about code structure, functions, classes, and dependencies. Focus on identifying patterns and architectural insights.",
-    expected_output="A structured summary of the JSON content with key findings including function count, class definitions, import dependencies, and code complexity analysis",
+    description="""Parse the large JSON file containing 20k lines of code and extract key information.
+
+    Use the JSON search tool with specific search queries like:
+    - "function" to find function definitions
+    - "class" to find class definitions  
+    - "import" to find import statements
+    - "def " to find Python function definitions
+    - "async def" to find async functions
+    
+    Search systematically through different aspects of the code structure.""",
+    expected_output="""A comprehensive analysis including:
+    - Total number of functions found
+    - List of main function names
+    - Class definitions identified
+    - Import dependencies discovered
+    - Code structure insights""",
     agent=json_analyst
 )
 
