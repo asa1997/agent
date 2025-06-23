@@ -6,7 +6,8 @@ from crewai.knowledge.source.json_knowledge_source import JSONKnowledgeSource
 ollama_llm = LLM(
     model="ollama/llama3.2:latest",
     base_url="http://localhost:11434",
-    temperature=0.3  # Lower temperature for more focused analysis
+    temperature=0.3,  # Lower temperature for more focused analysis
+    stream=True
 )
 
 # Set up tools
@@ -17,7 +18,8 @@ json_search_tool = JSONSearchTool(
             "provider": "ollama",
             "config": {
                 "model": "llama3.2:latest",
-                "base_url": "http://localhost:11434"
+                "base_url": "http://localhost:11434",
+                "stream": True
             }
         },
         "embedder": {
