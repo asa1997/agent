@@ -18,7 +18,7 @@ json_tool = JSONSearchTool(
             "provider": "ollama",
             "config": {
                 "model": "nomic-embed-text",  # Efficient embedding model
-                "url": "http://localhost:11434/api/embeddings"
+                # "url": "http://localhost:11434/api/embeddings"
             }
         }
     }
