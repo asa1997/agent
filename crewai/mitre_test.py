@@ -11,14 +11,14 @@ json_tool = JSONSearchTool(
                 "model": "llama3.2:latest",  # or "codellama:7b" for code analysis
                 "temperature": 0.1,
                 "top_p": 0.9,
-                # "base_url": "http://localhost:11434"  # Default Ollama URL
+                "url": "http://localhost:11434"  # Default Ollama URL
             }
         },
         "embedding_model": {
             "provider": "ollama",
             "config": {
                 "model": "nomic-embed-text",  # Efficient embedding model
-                "task_type": "retrieval_document"
+                "url": "http://localhost:11434/api/embeddings"
             }
         }
     }
