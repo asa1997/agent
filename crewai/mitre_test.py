@@ -1,5 +1,5 @@
 from crewai import Agent, Task, Crew, LLM
-from crewai_tools import JSONSearchTool, FileWriteTool
+from crewai_tools import JSONSearchTool, FileWriterTool
 from crewai.knowledge.source.json_knowledge_source import JSONKnowledgeSource
 
 # Configure Ollama LLM
@@ -30,7 +30,7 @@ json_search_tool = JSONSearchTool(
     }
 )
 
-file_writer = FileWriteTool()
+file_writer = FileWriterTool()
 
 # Create specialized agents
 data_analyst = Agent(
