@@ -24,7 +24,7 @@ json_search_tool = JSONSearchTool(
             "provider": "ollama",
             "config": {
                 "model": "mxbai-embed-large",
-                "url": "http://localhost:11434/api/embeddings"
+                # "url": "http://localhost:11434/api/embeddings"
             }
         }
     }
