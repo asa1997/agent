@@ -11,7 +11,7 @@ ollama_llm = LLM(
 
 # Set up tools
 json_search_tool = JSONSearchTool(
-    json_path='assessment_report.json',
+    json_path='mitre-report.json',
     config={
         "llm": {
             "provider": "ollama",
