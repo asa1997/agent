@@ -87,13 +87,17 @@ summarize = Task(
         markdown=True,
         output_file="security_assessment_conclusion.md"
 )
+try:
+    crew = Crew(
+            agents=[analyst, reporter],
+            tasks=[analysis, summarize],
+            process=Process.sequential,
+            verbose=True
+        )
+    report = crew.kickoff()
 
-crew = Crew(
-        agents=[analyst, reporter],
-        tasks=[analysis, summarize],
-        process=Process.sequential,
-        verbose=True
-    )
-report = crew.kickoff()
-
-print(report)
+    print(report)
+except Exception as e:
+    import traceback
+    print("❌ An error occurred while generating the report:")
+    traceback.print_exc()
