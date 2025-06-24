@@ -59,8 +59,8 @@ def analyze_json_chunks(chunk_files):
             print(" ")
             print("********-------------------------------**********")
             # Truncate if too large for context window
-            if len(chunk_content) > 8000:
-                chunk_content = chunk_content[:8000] + "\n... [truncated for length]"
+            # if len(chunk_content) > 8000:
+            #     chunk_content = chunk_content[:8000] + "\n... [truncated for length]"
             
             print(f"📄 Chunk {i} content length: {len(chunk_content)} characters")
             
