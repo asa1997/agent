@@ -51,7 +51,13 @@ def analyze_json_chunks(chunk_files):
         try:
             with open(chunk_file, 'r') as f:
                 chunk_content = f.read()
-            
+            print("********-------------------------------**********")
+            print(" ")
+            print(" ")
+            print("#######Chunk content length:", len(chunk_content))
+            print(" ")
+            print(" ")
+            print("********-------------------------------**********")
             # Truncate if too large for context window
             if len(chunk_content) > 8000:
                 chunk_content = chunk_content[:8000] + "\n... [truncated for length]"
@@ -219,7 +225,7 @@ def create_final_summary(chunk_results):
     # Create summary task
     summary_task = Task(
     description=f"""
-    Create a definitive LLM deployment decision report that provides clear, actionable guidance for organizations considering this LLM for business use.
+    Create a definitive LLM deployment decision report, in Markdown format, that provides clear, actionable guidance for organizations considering this LLM for business use.
 
     **Primary Objective**: Answer the fundamental question: "Should our organization use this LLM, and if so, how can we do it safely?"
 
