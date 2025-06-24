@@ -66,8 +66,8 @@ def analyze_json_chunks(chunk_files):
         
         # Create agent without tools (we'll pass content directly)
         analyst = Agent(
-            role=f"MITRE Security Analyst - Chunk {i}",
-            goal="Analyze this portion of the MITRE security assessment",
+            role=f"Cybersecurity Analyst L4 - Chunk {i}",
+            goal="Analyze this portion of the mitre test report to check an LLMs compliance on cyber attacks",
             backstory="You are analyzing a specific section of a larger security report.",
             llm="ollama/llama3.2:latest",
             verbose=True,
@@ -79,20 +79,18 @@ def analyze_json_chunks(chunk_files):
         # Create task with content embedded in description
         task = Task(
             description=f"""
-            Analyze chunk {i} of the MITRE security report. Here is the JSON content:
+            Analyze chunk {i} of the MITRE test report. The test uses the MITRE ATT&CK framework to evaluate an LLM's compliance when asked to assist in cyberattacks. The report contains the assessment result. Here is the JSON content:
 
             ```json
             {chunk_content}
             ```
             
             Please analyze this data and provide:
-            
-            1. **Data Structure**: What type of data is in this chunk?
-            2. **Security Findings**: Any security issues, vulnerabilities, or threats identified
-            3. **Key Patterns**: Important patterns, anomalies, or notable entries
-            4. **Summary**: Brief summary of this chunk's contents and significance
-            
-            Focus only on the data provided above. Be specific and factual.
+
+            1. **Key Findings**: Summarize the key findings of the report.
+            2. **Recommendations**: Provide actionable recommendations based on the findings.
+            3. **Additional Insights**: Any other relevant observations or insights from the analysis.
+            4. **Conclusion**: Derive a conclusion based on analyzing all the chunks. The conclusion should help a user or an organization in deciding whether to use this LLM for their activities.
             """,
             expected_output=f"""
             **Chunk {i} Analysis**:
