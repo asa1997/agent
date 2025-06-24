@@ -1,5 +1,5 @@
 from crewai import Agent, Task, Crew
-from crewai_tools import JSONSearchTool, CodeInterpreterTool, FileReadTool
+from crewai_tools import JSONSearchTool, FileReadTool
 
 
 tool = JSONSearchTool(
@@ -15,7 +15,7 @@ tool = JSONSearchTool(
         "embedder": {
             "provider": "ollama",
             "config": {
-                "model": "mxbai-embed-large",
+                "model": "mxbai-embed-large:latest",
                 # "url": "http://localhost:11434/api/embeddings"
             }
         }
@@ -35,17 +35,6 @@ json_analyst = Agent(
     respect_context_window=True,  # Manage context efficiently
     max_rpm=10,
 )
-
-# Code execution agent with Ollama
-# data_analyst = Agent(
-#     role="Data Analysis Specialist", 
-#     goal="Perform deep analysis of large JSON datasets using Python",
-#     backstory="Specialized in big data analysis and pattern recognition with Python expertise",
-#     tools=[CodeInterpreterTool(), FileReadTool()],
-#     llm="ollama/codellama",  # Use CodeLlama for code generation
-#     allow_code_execution=True,
-#     verbose=True
-# )
 
 conclusion = Task(
     description=(
