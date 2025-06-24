@@ -4,7 +4,8 @@ from crewai_tools import JSONSearchTool, FileReadTool
 from pydantic import BaseModel, Field
 from typing import List, Dict, Optional
 import json
-
+import warnings
+warnings.filterwarnings('ignore')
 # Define structured output models (same as before)
 class SecurityFinding(BaseModel):
     severity: str = Field(description="Critical, High, Medium, Low")
