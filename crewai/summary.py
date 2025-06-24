@@ -34,13 +34,13 @@ class SecurityAnalysisCrew:
     def __init__(self):
         # Configure Ollama LLMs
         self.agent_llm = LLM(
-            model="ollama/llama3.2-latest",
+            model="ollama/llama3.2:latest",
             base_url="http://localhost:11434"  # Default Ollama URL
         )
         
         # Use a different Ollama model for tools (you can experiment with different models)
         self.tool_llm = LLM(
-            model="ollama/llama3.2-latest",  # or try "ollama/codellama" for better JSON parsing
+            model="ollama/llama3.2:latest",  # or try "ollama/codellama" for better JSON parsing
             base_url="http://localhost:11434"
         )
         
@@ -50,7 +50,7 @@ class SecurityAnalysisCrew:
                 "llm": {
                     "provider": "ollama",
                     "config": {
-                        "model": "llama3.2-latest",
+                        "model": "llama3.2:latest",
                         "base_url": "http://localhost:11434",
                         "temperature": 0.1,  # Lower temperature for more consistent JSON parsing
                     }
@@ -271,7 +271,7 @@ class SecurityReportAnalysisFlow(Flow[SecurityAssessmentState]):
         super().__init__()
         # Configure Ollama LLM for direct calls in the flow
         self.flow_llm = LLM(
-            model="ollama/llama3.2-latest",
+            model="ollama/llama3.2:latest",
             base_url="http://localhost:11434"
         )
     
