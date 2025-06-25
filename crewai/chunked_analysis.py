@@ -424,7 +424,7 @@ if __name__ == "__main__":
             
             try:
                 # Chunk the file (reduced chunk size for better handling)
-                chunks = chunk_json_file(json_file, chunk_size=5)  # Smaller chunks
+                chunks = chunk_json_file(json_file, chunk_size=1)  # Smaller chunks
                 
                 # Analyze chunks
                 print(f"\n🚀 Starting analysis of {len(chunks)} chunks...")
