@@ -10,6 +10,7 @@ from crewai import LLM
 os.environ["OPENAI_MODEL_NAME"] = "ollama/llama3.2:latest"
 os.environ["OPENAI_API_KEY"] = "dummy"
 os.environ["OPENAI_API_BASE"] = "http://localhost:11434/v1"
+os.environ["OPENAI_PROVIDER"] = "ollama"  # direct CrewAI to use Ollama instead of OpenAI
 
 
 # Initialize tools
