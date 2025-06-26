@@ -7,6 +7,11 @@ from crewai import LLM
 # os.environ["SERPER_API_KEY"] = "your_serper_api_key"  # Get from serper.dev
 # os.environ["OPENAI_API_KEY"] = "your_openai_api_key"  # Get from OpenAI
 
+os.environ["OPENAI_MODEL_NAME"] = "ollama/llama3.2:latest"
+os.environ["OPENAI_API_KEY"] = "dummy"
+os.environ["OPENAI_API_BASE"] = "http://localhost:11434/v1"
+
+
 # Initialize tools
 web_search_tool = SerperDevTool()
 file_writer_tool = FileWriterTool()
