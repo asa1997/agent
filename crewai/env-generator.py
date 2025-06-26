@@ -1,6 +1,7 @@
 import os
 from crewai import Agent, Task, Crew
 from crewai_tools import SerperDevTool, FileWriterTool, FileReadTool
+from crewai import LLM
 
 # Set up API keys (you'll need to get these)
 # os.environ["SERPER_API_KEY"] = "your_serper_api_key"  # Get from serper.dev
@@ -314,6 +315,21 @@ with open("example_security_environment_setup.sh", "w") as f:
 
 print("📝 Example environment script created: example_security_environment_setup.sh")
 
+
+# For research and analysis agents
+research_llm = LLM(
+    model="ollama/llama3.2:latest",
+    temperature=0.3,  # Lower temperature for factual research
+    base_url="http://localhost:11434"
+)
+
+# For code generation
+code_llm = LLM(
+    model="ollama/codellama:7b",
+    temperature=0.1,  # Very low temperature for code generation
+    base_url="http://localhost:11434"
+)
+
 # Create specialized agents
 security_tools_researcher = Agent(
     role="Security Tools Research Specialist",
@@ -323,9 +339,10 @@ security_tools_researcher = Agent(
     SonarQube, SPDX-SBOM-Generator, Fossology, Scorecard, and Criticality Score. You stay updated with the latest 
     versions and best practices for security tool deployment.""",
     tools=[web_search_tool],
-    llm="ollama/llama3.2:latest",
+    llm=research_llm,
     verbose=True,
-    allow_delegation=False
+    allow_delegation=False,
+    async_execution=True
 )
 
 dependency_analyzer = Agent(
@@ -335,9 +352,10 @@ dependency_analyzer = Agent(
     multiple programming languages including Python, Node.js, Java, Go, Rust, and more. You understand package 
     managers, build systems, and can identify the tools needed to install project dependencies for security assessment.""",
     tools=[web_search_tool],
-    llm="ollama/llama3.2:latest",
+    llm=research_llm,
     verbose=True,
-    allow_delegation=False
+    allow_delegation=False,
+    async_execution=True
 )
 
 script_template_analyzer = Agent(
@@ -347,7 +365,7 @@ script_template_analyzer = Agent(
     understanding their architecture, and identifying areas for improvement. You can extract patterns, functions, 
     and best practices from template scripts to create enhanced versions.""",
     tools=[file_read_tool],
-    llm="ollama/codellama:7b",
+    llm=code_llm,
     verbose=True,
     allow_delegation=False
 )
@@ -360,7 +378,7 @@ shell_script_developer = Agent(
     and zsh compatibility, and you write scripts that work across different Linux distributions and macOS. You excel 
     at enhancing existing script templates with new functionality while maintaining their structure and best practices.""",
     tools=[file_writer_tool, file_read_tool],
-    llm="ollama/codellama:7b",
+    llm=code_llm,
     verbose=True,
     allow_delegation=False
 )
@@ -525,8 +543,15 @@ generate_enhanced_environment_script_task = Task(
     - Has been tested for common scenarios and edge cases
     - Is ready for production deployment""",
     agent=shell_script_developer,
-    context=[analyze_template_script_task, research_security_tools_task, analyze_project_dependencies_task]
+    context=[analyze_template_script_task, research_security_tools_task, analyze_project_dependencies_task],
+    output_file='security-assessment-environment-setup.sh'  # Ensure file is created
+
 )
+
+def task_callback(task_output):
+    """Callback function to track task completion"""
+    print(f"✅ Completed task: {task_output.description[:50]}...")
+    print(f"📊 Task output length: {len(str(task_output.raw))}")
 
 # Create the crew
 security_environment_crew = Crew(
@@ -534,8 +559,19 @@ security_environment_crew = Crew(
     tasks=[analyze_template_script_task, research_security_tools_task, analyze_project_dependencies_task, generate_enhanced_environment_script_task],
     verbose=True,
     planning=True,  # Enable planning for better coordination
-    memory=True     # Enable memory for better context retention
+    memory=True,     # Enable memory for better context retention
+    embedder={
+        "provider": "ollama",
+        "config": {
+            "model": "mxbai-embed-large",  # You'll need to pull this model
+            "url": "http://localhost:11434/api/embeddings"
+        }
+    },
+    task_callback=task_callback,  # Set the callback function
 )
+
+
+
 
 # Function to run the crew
 def setup_security_environment():
@@ -580,7 +616,7 @@ def validate_environment():
     """
     Validate that the required environment is set up correctly.
     """
-    required_env_vars = ["SERPER_API_KEY", "OPENAI_API_KEY"]
+    required_env_vars = ["SERPER_API_KEY"]
     missing_vars = []
     
     for var in required_env_vars:
