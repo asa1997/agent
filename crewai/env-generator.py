@@ -3,8 +3,8 @@ from crewai import Agent, Task, Crew
 from crewai_tools import SerperDevTool, FileWriterTool, FileReadTool
 
 # Set up API keys (you'll need to get these)
-os.environ["SERPER_API_KEY"] = "your_serper_api_key"  # Get from serper.dev
-os.environ["OPENAI_API_KEY"] = "your_openai_api_key"  # Get from OpenAI
+# os.environ["SERPER_API_KEY"] = "your_serper_api_key"  # Get from serper.dev
+# os.environ["OPENAI_API_KEY"] = "your_openai_api_key"  # Get from OpenAI
 
 # Initialize tools
 web_search_tool = SerperDevTool()
