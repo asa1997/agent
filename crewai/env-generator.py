@@ -6,8 +6,9 @@ from crewai import LLM
 # Set up API keys (you'll need to get these)
 # os.environ["SERPER_API_KEY"] = "your_serper_api_key"  # Get from serper.dev
 # os.environ["OPENAI_API_KEY"] = "your_openai_api_key"  # Get from OpenAI
-MODEL="ollama/llama3.2:latest"
-OLLAMA_API_BASE="http://localhost:11434"
+os.environ["MODEL"] = "ollama/llama3.2:latest"
+os.environ["OLLAMA_API_BASE"] = "http://localhost:11434"
+os.environ.pop("OPENAI_API_KEY", None)
 # os.environ["OPENAI_MODEL_NAME"] = "ollama/llama3.2:latest"
 # os.environ["OPENAI_API_KEY"] = "dummy"
 # os.environ["OPENAI_API_BASE"] = "http://localhost:11434/v1"
