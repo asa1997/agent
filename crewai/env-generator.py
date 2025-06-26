@@ -563,7 +563,7 @@ security_environment_crew = Crew(
     embedder={
         "provider": "ollama",
         "config": {
-            "model": "mxbai-embed-large",  # You'll need to pull this model
+            "model": "mxbai-embed-large:latest",  # You'll need to pull this model
             "url": "http://localhost:11434/api/embeddings"
         }
     },
