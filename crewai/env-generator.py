@@ -609,6 +609,8 @@ def setup_security_environment():
     except Exception as e:
         print(f"❌ Error during crew execution: {str(e)}")
         print("🔍 Check the logs for more details")
+        import traceback
+        traceback.print_exc()
         return None
 
 # Additional utility functions
