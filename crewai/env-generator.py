@@ -566,8 +566,8 @@ security_environment_crew = Crew(
     agents=[script_template_analyzer, security_tools_researcher, dependency_analyzer, shell_script_developer],
     tasks=[analyze_template_script_task, research_security_tools_task, analyze_project_dependencies_task, generate_enhanced_environment_script_task],
     verbose=True,
-    planning=True,  # Enable planning for better coordination
-    memory=True,     # Enable memory for better context retention
+    # planning=True,  # Enable planning for better coordination
+    # memory=True,     # Enable memory for better context retention
     # embedder={
     #     "provider": "ollama",
     #     "config": {
