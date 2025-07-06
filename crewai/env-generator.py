@@ -568,13 +568,20 @@ security_environment_crew = Crew(
     verbose=True,
     planning=True,  # Enable planning for better coordination
     memory=True,     # Enable memory for better context retention
+    # embedder={
+    #     "provider": "ollama",
+    #     "config": {
+    #         "model": "mxbai-embed-large:latest",  # You'll need to pull this model
+    #         "url": "http://localhost:11434/api/embeddings"
+    #     }
+    # },
     embedder={
         "provider": "ollama",
         "config": {
-            "model": "mxbai-embed-large:latest",  # You'll need to pull this model
-            "url": "http://localhost:11434/api/embeddings"
-        }
-    },
+            "model": "mxbai-embed-large:latest",
+            "base_url": "http://localhost:11434"
+    }
+},
     task_callback=task_callback,  # Set the callback function
 )
 
