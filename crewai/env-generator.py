@@ -327,14 +327,14 @@ print("📝 Example environment script created: example_security_environment_set
 # For research and analysis agents
 research_llm = LLM(
     model="ollama/llama3.2:latest",
-    temperature=0.3,  # Lower temperature for factual research
+    # temperature=0.3,  # Lower temperature for factual research
     base_url="http://localhost:11434"
 )
 
 # For code generation
 code_llm = LLM(
     model="ollama/codellama:7b",
-    temperature=0.1,  # Very low temperature for code generation
+    # temperature=0.1,  # Very low temperature for code generation
     base_url="http://localhost:11434"
 )
 
@@ -577,13 +577,13 @@ security_environment_crew = Crew(
     #         "url": "http://localhost:11434/api/embeddings"
     #     }
     # },
-    embedder={
-        "provider": "ollama",
-        "config": {
-            "model": "mxbai-embed-large:latest",
-            "base_url": "http://localhost:11434"
-    }
-},
+#     embedder={
+#         "provider": "ollama",
+#         "config": {
+#             "model": "mxbai-embed-large:latest",
+#             "base_url": "http://localhost:11434"
+#     }
+# },
     task_callback=task_callback,  # Set the callback function
 )
 
