@@ -395,6 +395,8 @@ shell_script_developer = Agent(
 analyze_template_script_task = Task(
     description="""Analyze the provided example environment script template located at 'example_security_environment_setup.sh'.
 
+    First, read the contents of the file 'example_security_environment_setup.sh' using the file read tool.
+
     Your analysis should cover:
     1. Script structure and organization
     2. Function definitions and their purposes
@@ -600,6 +602,12 @@ def setup_security_environment():
     print("   3. Analyze project dependency management approaches")
     print("   4. Generate an enhanced environment setup script")
     print()
+    
+    if not os.path.exists("example_security_environment_setup.sh"):
+        print("📝 Creating example template file...")
+        with open("example_security_environment_setup.sh", "w") as f:
+            f.write(example_script_content)
+        print("✅ Template file created successfully")
     
     try:
         result = security_environment_crew.kickoff()
