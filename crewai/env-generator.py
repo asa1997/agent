@@ -341,7 +341,7 @@ code_llm = LLM(
 # Create specialized agents
 security_tools_researcher = Agent(
     role="Security Tools Research Specialist",
-    goal="Research and gather comprehensive information about security assessment tools including installation methods, dependencies, and configuration requirements",
+    goal="Research and gather comprehensive information about security assessment tools including installation methods, dependencies, and configuration requirements.",
     backstory="""You are an expert cybersecurity researcher with deep knowledge of security assessment tools. 
     You specialize in understanding tool dependencies, installation procedures, and system requirements for tools like 
     SonarQube, SPDX-SBOM-Generator, Fossology, Scorecard, and Criticality Score. You stay updated with the latest 
@@ -453,7 +453,7 @@ research_security_tools_task = Task(
 )
 
 analyze_project_dependencies_task = Task(
-    description="""Research and analyze how to detect and install project dependencies for security assessment:
+    description="""Research and analyze how to detect and install project dependencies of the project {project_name} for security assessment:
 
     1. Research methods to detect project types and their dependency files:
        - Python: requirements.txt, setup.py, pyproject.toml, Pipfile
@@ -493,7 +493,7 @@ analyze_project_dependencies_task = Task(
 )
 
 generate_enhanced_environment_script_task = Task(
-    description="""Create an enhanced security assessment environment setup script based on:
+    description="""Create an enhanced security assessment environment setup script for project {project_name} based on:
     1. The analyzed template script structure and patterns
     2. The researched security tools installation information
     3. The project dependency analysis and installation methods
@@ -610,7 +610,10 @@ def setup_security_environment():
         print("✅ Template file created successfully")
     
     try:
-        result = security_environment_crew.kickoff()
+        inputs = {
+            'project_name': 'fastjson'
+        }
+        result = security_environment_crew.kickoff(inputs=inputs)
         print("\n" + "="*60)
         print("✅ Security Environment Setup Script Generated Successfully!")
         print("="*60)
