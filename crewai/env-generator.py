@@ -18,7 +18,7 @@ from crewai import LLM
 # Initialize tools
 web_search_tool = SerperDevTool()
 file_writer_tool = FileWriterTool()
-file_read_tool = FileReadTool()
+file_read_tool = FileReadTool(file_path='/home/ubuntu/agent/crewai/example_security_environment_setup.sh')
 
 # First, let's create an example environment script template
 example_script_content = '''#!/bin/bash
